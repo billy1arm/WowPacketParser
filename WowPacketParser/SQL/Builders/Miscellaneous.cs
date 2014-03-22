@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using WowPacketParser.Enums;
 using WowPacketParser.Misc;
 using WowPacketParser.Store;
@@ -136,7 +137,7 @@ namespace WowPacketParser.SQL.Builders
                 if (!Settings.SQLOutputFlag.HasAnyFlagBit(SQLOutput.SniffData) && !Settings.SQLOutputFlag.HasAnyFlagBit(SQLOutput.SniffDataOpcodes))
                     return string.Empty;
 
-            var rows = new List<QueryBuilder.SQLInsertRow>();
+            var rows = new HashSet<QueryBuilder.SQLInsertRow>((IEqualityComparer<QueryBuilder.SQLInsertRow>)new QueryBuilder.SQLInsertRow());
             foreach (var data in Storage.SniffData)
             {
                 var row = new QueryBuilder.SQLInsertRow();
@@ -150,7 +151,7 @@ namespace WowPacketParser.SQL.Builders
                 rows.Add(row);
             }
 
-            return new QueryBuilder.SQLInsert(tableName, rows, ignore: true, withDelete: false).Build();
+            return new QueryBuilder.SQLInsert(tableName, rows.ToList(), ignore: true, withDelete: false).Build();
         }
 
         // Non-WDB data but nevertheless data that should be saved to gameobject_template
