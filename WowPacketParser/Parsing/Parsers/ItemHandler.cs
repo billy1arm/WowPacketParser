@@ -1190,9 +1190,9 @@ namespace WowPacketParser.Parsing.Parsers
 
         [Parser(Opcode.SMSG_SET_PROFICIENCY)]
         public static void HandleSetProficency(Packet packet)
-        {
-            packet.ReadEnum<ItemClass>("Class", TypeCode.Byte);
+        {       
             packet.ReadEnum<UnknownFlags>("Mask",TypeCode.UInt32);
+            packet.ReadEnum<ItemClass>("Class", TypeCode.Byte);
         }
 
         [Parser(Opcode.SMSG_ITEM_COOLDOWN)]
