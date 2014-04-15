@@ -10,8 +10,8 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.CMSG_LF_GUILD_BROWSE)]
         public static void HandleGuildFinderBrowse(Packet packet)
         {
-            packet.ReadEnum<GuildFinderOptionsRoles>("Class Roles", TypeCode.UInt32);
             packet.ReadEnum<GuildFinderOptionsAvailability>("Availability", TypeCode.UInt32);
+            packet.ReadEnum<GuildFinderOptionsRoles>("Class Roles", TypeCode.UInt32);
             packet.ReadEnum<GuildFinderOptionsInterest>("Guild Interests", TypeCode.UInt32);
             packet.ReadUInt32("Player Level");
         }
