@@ -10,10 +10,19 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.CMSG_LF_GUILD_BROWSE)]
         public static void HandleGuildFinderBrowse(Packet packet)
         {
+            //SMSG
+
+            packet.ReadByte("Join");
+            var length = packet.ReadBits(9);
+            packet.ReadWoWString("Comment", length);
+
+
+            /* CMSG
             packet.ReadEnum<GuildFinderOptionsAvailability>("Availability", TypeCode.UInt32);
             packet.ReadEnum<GuildFinderOptionsRoles>("Class Roles", TypeCode.UInt32);
             packet.ReadEnum<GuildFinderOptionsInterest>("Guild Interests", TypeCode.UInt32);
             packet.ReadUInt32("Player Level");
+             */
         }
 
         [Parser(Opcode.CMSG_LF_GUILD_SET_GUILD_POST, ClientVersionBuild.V4_2_2_14545, ClientVersionBuild.V4_3_4_15595)]

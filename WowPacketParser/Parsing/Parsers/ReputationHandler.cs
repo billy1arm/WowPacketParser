@@ -69,8 +69,15 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.CMSG_SET_FACTION_ATWAR)]
         public static void HandleSetFactionAtWar(Packet packet)
         {
-            packet.ReadUInt32("Faction Id");
-            packet.ReadBoolean("At War");
+            packet.ReadByte("Replist Id");
+            
         }
+        [Parser(Opcode.CMSG_SET_FACTION_ATWAR_REMOVE)]
+        public static void HandleSetFactionAtWarRemove(Packet packet)
+        {
+            packet.ReadByte("Replist Id");
+
+        }
+
     }
 }
