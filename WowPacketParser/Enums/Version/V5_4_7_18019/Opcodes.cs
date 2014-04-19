@@ -313,6 +313,7 @@ namespace WowPacketParser.Enums.Version.V5_4_7_18019
 {Opcode.SMSG_PONG                                                , 0x15B1},
 {Opcode.SMSG_POWER_UPDATE                                        , 0x1441},
 {Opcode.SMSG_QUERY_TIME_RESPONSE                                 , 0x0E2A},
+{Opcode.SMSG_QUEST_POI_QUERY_RESPONSE                            , 0x0957},
 {Opcode.SMSG_QUESTGIVER_QUEST_COMPLETE                           , 0x0F77},
 {Opcode.SMSG_QUESTGIVER_QUEST_DETAILS                            , 0x0966},
 {Opcode.SMSG_QUESTGIVER_STATUS_MULTIPLE                          , 0x0F79},

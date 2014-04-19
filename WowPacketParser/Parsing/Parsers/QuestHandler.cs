@@ -171,6 +171,9 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.CMSG_PUSHQUESTTOPARTY)]
         public static void HandleQuestQuery(Packet packet)
         {
+
+            packet.ReadByte("Unknown");
+            packet.ReadInt16("Unknown2");
             packet.ReadInt32("Entry");
         }
 
@@ -551,19 +554,17 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.CMSG_QUEST_NPC_QUERY, ClientVersionBuild.Zero, ClientVersionBuild.V4_3_0_15005)]
         public static void HandleQuestPoiQuery(Packet packet)
         {
-            var count = packet.ReadUInt32("Count");
+
+            packet.ReadInt32("Quest Entry");
+            
+            /* var count = packet.ReadUInt32("Count");
 
             for (var i = 0; i < count; i++)
                 packet.ReadEntryWithName<Int32>(StoreNameType.Quest, "Quest ID", i);
+            */
         }
 
-        [Parser(Opcode.CMSG_QUEST_NPC_QUERY, ClientVersionBuild.V4_3_0_15005)]
-        public static void HandleQuestNPCQuery430(Packet packet)
-        {
-            var count = packet.ReadBits("Count", 24);
-            for (int i = 0; i < count; ++i)
-                packet.ReadEntryWithName<UInt32>(StoreNameType.Quest, "Quest", i);
-        }
+
 
         [Parser(Opcode.SMSG_QUEST_NPC_QUERY_RESPONSE, ClientVersionBuild.Zero, ClientVersionBuild.V4_3_4_15595)]
         public static void HandleQuestNpcQueryResponse(Packet packet)
@@ -609,7 +610,22 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_QUEST_POI_QUERY_RESPONSE)]
         public static void HandleQuestPoiQueryResponse(Packet packet)
         {
+
+            packet.ReadByte("Byte");
+            packet.ReadByte("Byte2");
+            packet.ReadByte("Byte2");
+            packet.ReadByte("Byte2");
+            packet.ReadByte("Byte2");
+            packet.ReadByte("Byte2");
+            packet.ReadUInt32("Quest End NPC Enty 2");
+            packet.ReadUInt32("Quest End NPC Enty 1");
+            packet.ReadUInt32("Quest Entry");
+            //packet.ReadUInt32("Unk Int32 3");
+
+
+            /*
             var count = packet.ReadInt32("Count");
+
 
             for (var i = 0; i < count; ++i)
             {
@@ -651,9 +667,10 @@ namespace WowPacketParser.Parsing.Parsers
                         questPoi.Points.Add(questPoiPoint);
                     }
 
-                    Storage.QuestPOIs.Add(new Tuple<uint, uint>((uint) questId, (uint) idx), questPoi, packet.TimeSpan);
-                }
-            }
+             */ 
+                  //  Storage.QuestPOIs.Add(new Tuple<uint, uint>((uint) questId, (uint) idx), questPoi, packet.TimeSpan);
+              //  }
+           // }
         }
 
         [Parser(Opcode.SMSG_QUEST_FORCE_REMOVE)]
