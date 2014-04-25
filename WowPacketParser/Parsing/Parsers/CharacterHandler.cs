@@ -1341,6 +1341,19 @@ namespace WowPacketParser.Parsing.Parsers
             }
         }
 
+        [Parser(Opcode.SMSG_UNKNOW1)]
+        public static void HandleUnknown(Packet packet)
+        {
+            packet.ReadByte("Byte1");
+            packet.ReadUInt16("Byte1");
+            packet.ReadByte("Byte1");
+            packet.ReadByte("Byte1");
+            packet.ReadByte("Byte1");
+            packet.ReadInt16("Byte1");
+            packet.ReadInt16("Uint16");
+        }
+
+
         [Parser(Opcode.CMSG_CHAR_ENUM)]
         [Parser(Opcode.CMSG_HEARTH_AND_RESURRECT)]
         [Parser(Opcode.CMSG_SELF_RES)]

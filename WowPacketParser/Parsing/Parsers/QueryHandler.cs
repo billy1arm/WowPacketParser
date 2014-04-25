@@ -92,69 +92,55 @@ namespace WowPacketParser.Parsing.Parsers
         public static void HandleCreatureQueryResponse(Packet packet)
         {
             var entry = packet.ReadEntry("Entry");
-            if (entry.Value)
-                return;
+            var hasData = packet.ReadBit();
+            if (!hasData)
+                return; // nothing to do
 
             var creature = new UnitTemplate();
 
-            var nameCount = ClientVersion.AddedInVersion(ClientVersionBuild.V4_1_0_13914) ? 8 : 4; // Might be earlier or later
-            var name = new string[nameCount];
-            for (var i = 0; i < name.Length; i++)
-                name[i] = packet.ReadCString("Name", i);
-            creature.Name = name[0];
+            creature.RacialLeader = packet.ReadBit("Racial Leader");
+            var iconLenS = (int)packet.ReadBits(6);
+            var unkLens = (int)packet.ReadBits(11);
+            var nameLens = (int)packet.ReadBits(11);
+            for (int i = 0; i < 6; i++)
+                unkLens = (int)packet.ReadBits(11);
 
-            creature.SubName = packet.ReadCString("Sub Name");
+            var qItemCount = packet.ReadBits(22);
+            var subLenS = (int)packet.ReadBits(11);
+            unkLens = (int)packet.ReadBits(11);
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V5_0_5_16048))
-                packet.ReadCString("Unk String");
+            packet.ResetBitReader();
 
-            creature.IconName = packet.ReadCString("Icon Name");
+            creature.Modifier2 = packet.ReadSingle("Modifier 2");
 
-            creature.TypeFlags = packet.ReadEnum<CreatureTypeFlag>("Type Flags", TypeCode.UInt32);
+            creature.Name = packet.ReadCString("Name");
+            creature.Modifier1 = packet.ReadSingle("Modifier 1");
+            creature.KillCredits = new uint[2];
+            creature.KillCredits[1] = packet.ReadUInt32("KillCredit 2");
+            creature.DisplayIds = new uint[4];
+            creature.DisplayIds[1] = packet.ReadUInt32("Display ID 1");
+            creature.QuestItems = new uint[qItemCount];
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V4_1_0_13914)) // Might be earlier or later
-                creature.TypeFlags2 = packet.ReadUInt32("Creature Type Flags 2"); // Missing enum
+            for (var i = 0; i < qItemCount; ++i)
+                creature.QuestItems[i] = (uint)packet.ReadEntryWithName<Int32>(StoreNameType.Item, "Quest Item", i);
 
             creature.Type = packet.ReadEnum<CreatureType>("Type", TypeCode.Int32);
 
+            if (iconLenS > 1)
+                creature.IconName = packet.ReadCString("Icon Name");
+
+            creature.TypeFlags2 = packet.ReadUInt32("Creature Type Flags 2"); // Missing enum
+            creature.TypeFlags = packet.ReadEnum<CreatureTypeFlag>("Type Flags", TypeCode.UInt32);
+            creature.KillCredits[0] = packet.ReadUInt32("KillCredit 1");
             creature.Family = packet.ReadEnum<CreatureFamily>("Family", TypeCode.Int32);
-
+            creature.MovementId = packet.ReadUInt32("Movement ID");
+            creature.Expansion = packet.ReadEnum<ClientType>("Expansion", TypeCode.UInt32);
+            creature.DisplayIds[0] = packet.ReadUInt32("Display ID 0");
+            creature.DisplayIds[2] = packet.ReadUInt32("Display ID 2");
             creature.Rank = packet.ReadEnum<CreatureRank>("Rank", TypeCode.Int32);
-
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
-            {
-                creature.KillCredits = new uint[2];
-                for (var i = 0; i < 2; ++i)
-                    creature.KillCredits[i] = packet.ReadUInt32("Kill Credit", i);
-            }
-            else // Did they stop sending pet spell data after 3.1?
-            {
-                creature.UnkInt = packet.ReadInt32("Unk Int");
-                creature.PetSpellData = packet.ReadUInt32("Pet Spell Data Id");
-            }
-
-            creature.DisplayIds = new uint[4];
-            for (var i = 0; i < 4; i++)
-                creature.DisplayIds[i] = packet.ReadUInt32("Display ID", i);
-
-            creature.Modifier1 = packet.ReadSingle("Modifier 1");
-            creature.Modifier2 = packet.ReadSingle("Modifier 2");
-
-            creature.RacialLeader = packet.ReadBoolean("Racial Leader");
-
-            var qItemCount = ClientVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192) ? 6 : 4;
-            creature.QuestItems = new uint[qItemCount];
-
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
-            {
-                for (var i = 0; i < qItemCount; i++)
-                    creature.QuestItems[i] = (uint)packet.ReadEntryWithName<Int32>(StoreNameType.Item, "Quest Item", i);
-
-                creature.MovementId = packet.ReadUInt32("Movement ID");
-            }
-
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V4_0_1_13164))
-                creature.Expansion = packet.ReadEnum<ClientType>("Expansion", TypeCode.UInt32);
+            if (subLenS > 1)
+                creature.SubName = packet.ReadCString("Sub Name");
+            creature.DisplayIds[3] = packet.ReadUInt32("Display ID 3");
 
             packet.AddSniffData(StoreNameType.Unit, entry.Key, "QUERY_RESPONSE");
 
@@ -165,7 +151,8 @@ namespace WowPacketParser.Parsing.Parsers
                 ObjectType = ObjectType.Unit,
                 Name = creature.Name,
             };
-            Storage.ObjectNames.Add((uint)entry.Key, objectName, packet.TimeSpan);
+            Storage.ObjectNames.Add((uint)entry.Key, objectName, packet.TimeSpan); 
+
         }
 
         [Parser(Opcode.CMSG_PAGE_TEXT_QUERY)]
@@ -194,43 +181,36 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.CMSG_NPC_TEXT_QUERY, ClientVersionBuild.Zero, ClientVersionBuild.V5_4_7_17898)]
         public static void HandleNpcTextQuery(Packet packet)
         {
-            ReadQueryHeader(ref packet);
+            var entry = packet.ReadInt32("Entry");
+
+            var GUID = new byte[8];
+            GUID = packet.StartBitStream(5, 6, 7, 4, 3, 0, 2, 1);
+            packet.ParseBitStream(GUID, 0, 7, 1, 4, 3, 5, 2, 6);
+            packet.WriteGuid("GUID", GUID);
         }
 
         [HasSniffData]
         [Parser(Opcode.SMSG_NPC_TEXT_UPDATE)]
         public static void HandleNpcTextUpdate(Packet packet)
         {
+
             var npcText = new NpcText();
 
-            var entry = packet.ReadEntry("Entry");
+            var hasData = packet.ReadBit("hasData");
+            var entry = packet.ReadEntry("TextID");
             if (entry.Value) // Can be masked
                 return;
 
+            if (!hasData)
+                return; // nothing to do
+
+            var size = packet.ReadInt32("Size");
+
             npcText.Probabilities = new float[8];
-            npcText.Texts1 = new string[8];
-            npcText.Texts2 = new string[8];
-            npcText.Languages = new Language[8];
-            npcText.EmoteDelays = new uint[8][];
-            npcText.EmoteIds = new EmoteType[8][];
-            for (var i = 0; i < 8; i++)
-            {
+            for (var i = 0; i < 8; ++i)
                 npcText.Probabilities[i] = packet.ReadSingle("Probability", i);
-
-                npcText.Texts1[i] = packet.ReadCString("Text 1", i);
-
-                npcText.Texts2[i] = packet.ReadCString("Text 2", i);
-
-                npcText.Languages[i] = packet.ReadEnum<Language>("Language", TypeCode.Int32, i);
-
-                npcText.EmoteDelays[i] = new uint[3];
-                npcText.EmoteIds[i] = new EmoteType[3];
-                for (var j = 0; j < 3; j++)
-                {
-                    npcText.EmoteDelays[i][j] = packet.ReadUInt32("Emote Delay", i, j);
-                    npcText.EmoteIds[i][j] = packet.ReadEnum<EmoteType>("Emote ID", TypeCode.UInt32, i, j);
-                }
-            }
+            for (var i = 0; i < 8; ++i)
+                packet.ReadInt32("Unknown Id", i);
 
             packet.AddSniffData(StoreNameType.NpcText, entry.Key, "QUERY_RESPONSE");
 

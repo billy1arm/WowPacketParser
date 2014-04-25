@@ -60,11 +60,43 @@ namespace WowPacketParser.Parsing.Parsers
         [Parser(Opcode.SMSG_TRAINER_BUY_SUCCEEDED)]
         public static void HandleServerTrainerBuySucceedeed(Packet packet)
         {
+
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte"); //
+            packet.ReadInt16("int16");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadInt16("int16");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadByte("byte");
+            packet.ReadGuid("guid");
+
+
+
+            
+            /*            
             packet.ReadGuid("GUID");
             packet.ReadEntryWithName<Int32>(StoreNameType.Spell, "Spell ID");
             if (ClientVersion.Build == ClientVersionBuild.V4_2_2_14545)
                 packet.ReadInt32("Trainer Service"); // <TS>
-
+            */
             /* Comments about TS:
              * if !TS, "Trainer service <TS> unavailable"
              * if TS == 1, "Not enough money for trainer service <TS>"

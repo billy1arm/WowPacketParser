@@ -673,8 +673,10 @@ namespace WowPacketParser.Parsing.Parsers
            // }
         }
 
+
+
+
         [Parser(Opcode.SMSG_QUEST_FORCE_REMOVE)]
-        [Parser(Opcode.CMSG_QUEST_CONFIRM_ACCEPT)]
         [Parser(Opcode.SMSG_QUESTUPDATE_FAILED)]
         [Parser(Opcode.SMSG_QUESTUPDATE_FAILEDTIMER)]
         [Parser(Opcode.SMSG_QUESTUPDATE_COMPLETE, ClientVersionBuild.Zero, ClientVersionBuild.V4_2_2_14545)]
@@ -739,6 +741,59 @@ namespace WowPacketParser.Parsing.Parsers
             ReadExtraQuestInfo(ref packet);
         }
 
+
+         [Parser(Opcode.SMSG_QUESTUPDATE_COMPLETE, ClientVersionBuild.V5_4_7_18019)]
+        public static void HandleQuestUpdateComplete547(Packet packet)
+        {
+
+            packet.ReadGuid("Guid");
+            packet.ReadInt32("Unk Int32");
+            packet.ReadInt32("QuestGiver Portrait");
+
+            packet.ReadInt32("QuestTurn Portrait");
+
+            packet.ReadByte("Unk Byte");
+
+
+
+            packet.ReadCString("Complete Text");
+
+            packet.ReadCString("QuestGiver Text Window");
+
+            packet.ReadCString("QuestGiver Target Name");
+
+            packet.ReadEntryWithName<UInt32>(StoreNameType.Quest, "Quest ID");
+            packet.ReadCString("QuestTurn Text Window");
+            packet.ReadCString("QuestTurn Target Name");
+            packet.ReadCString("Title");
+            packet.ReadEnum<QuestFlags>("Quest Flags", TypeCode.UInt32);
+
+            packet.ReadEnum<QuestFlags2>("Quest Flags 2", TypeCode.UInt32);
+
+            packet.ReadInt32("Unk Int32");
+
+
+
+            var emoteCount = packet.ReadUInt32("Quest Emote Count");
+
+            for (var i = 0; i < emoteCount; i++)
+
+            {
+
+                packet.ReadUInt32("Emote Delay (ms)", i);
+
+                packet.ReadUInt32("Emote Id", i);
+
+            }
+
+
+
+            ReadExtraQuestInfo(ref packet);
+
+      }
+   
+
+
         [Parser(Opcode.SMSG_QUERY_QUESTS_COMPLETED_RESPONSE)]
         public static void HandleQuestCompletedResponse(Packet packet)
         {
@@ -753,7 +808,21 @@ namespace WowPacketParser.Parsing.Parsers
         }
 
         [Parser(Opcode.CMSG_QUESTGIVER_STATUS_QUERY)]
-        [Parser(Opcode.CMSG_QUESTGIVER_HELLO)]
+        [Parser(Opcode.CMSG_QUEST_CONFIRM_ACCEPT)]
+        public static void HandleQuestgiverHello(Packet packet)
+        {
+            var guid = new byte[8];
+    
+            //guid bitek: 0,7,2,3,1,4,5,6
+            //buid byteok: 6,7,3,1,5,2,0,4
+
+            packet.StartBitStream(guid, 0, 7, 2, 3, 1, 4, 5, 6);
+            packet.ParseBitStream(guid, 6, 7, 3, 1, 5, 2, 0, 4);
+
+            packet.WriteGuid("Guid", guid);
+        }
+
+
         [Parser(Opcode.CMSG_QUESTGIVER_QUEST_AUTOLAUNCH)]
         public static void HandleQuestgiverStatusQuery(Packet packet)
         {

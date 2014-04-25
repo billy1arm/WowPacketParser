@@ -22,39 +22,40 @@ namespace WowPacketParser.Parsing.Parsers
 
             var entry = packet.ReadEntry("Entry");
 
-            if (entry.Value) // entry is masked
-                return;
+            var unk1 = packet.ReadInt32("Unk1 UInt32");
 
             gameObject.Type = packet.ReadEnum<GameObjectType>("Type", TypeCode.Int32);
             gameObject.DisplayId = packet.ReadUInt32("Display ID");
+            gameObject.Name = packet.ReadCString("Name");
 
-            var name = new string[4];
-            for (var i = 0; i < 4; i++)
-                name[i] = packet.ReadCString("Name", i);
-            gameObject.Name = name[0];
+            for (var i = 0; i < 3; i++)
+                unk1 = packet.ReadByte("NameX UInt8");
+
 
             gameObject.IconName = packet.ReadCString("Icon Name");
             gameObject.CastCaption = packet.ReadCString("Cast Caption");
             gameObject.UnkString = packet.ReadCString("Unk String");
 
-            gameObject.Data = new int[ClientVersion.AddedInVersion(ClientVersionBuild.V4_0_6_13596) ? 32 : 24];
+            gameObject.Data = new int[32];
             for (var i = 0; i < gameObject.Data.Length; i++)
                 gameObject.Data[i] = packet.ReadInt32("Data", i);
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)) // not sure when it was added exactly - did not exist in 2.4.1 sniff
-                gameObject.Size = packet.ReadSingle("Size");
 
-            gameObject.QuestItems = new uint[ClientVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192) ? 6 : 4];
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
-                for (var i = 0; i < gameObject.QuestItems.Length; i++)
-                    gameObject.QuestItems[i] = (uint)packet.ReadEntryWithName<Int32>(StoreNameType.Item, "Quest Item", i);
+            gameObject.Size = packet.ReadSingle("Size");
 
-            if (ClientVersion.AddedInVersion(ClientVersionBuild.V4_0_6_13596))
-                gameObject.UnknownInt = packet.ReadInt32("Unknown UInt32");
+            gameObject.QuestItems = new uint[packet.ReadByte("QuestItems Length")]; // correct?
 
-            packet.AddSniffData(StoreNameType.GameObject, entry.Key, "QUERY_RESPONSE");
+            for (var i = 0; i < gameObject.QuestItems.Length; i++)
+                gameObject.QuestItems[i] = (uint)packet.ReadEntryWithName<Int32>(StoreNameType.Item, "Quest Item", i);
 
-            Storage.GameObjectTemplates.Add((uint) entry.Key, gameObject, packet.TimeSpan);
+            packet.ReadEnum<ClientType>("Expansion", TypeCode.UInt32);
+
+            //var entry = packet.ReadEntry("Entry");
+            //if (entry.Value) // entry is masked
+            // return;
+            packet.ReadByte("Unk Byte");
+
+            Storage.GameObjectTemplates.Add((uint)entry.Key, gameObject, packet.TimeSpan);
 
             var objectName = new ObjectName
             {
