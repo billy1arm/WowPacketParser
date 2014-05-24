@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPacketParserModule.V4_3_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPacketParserModule.V5_4_7_18019", "WowPacketParserModule.V5_4_7_18019\WowPacketParserModule.V5_4_7_18019.csproj", "{422AC0F6-A8DF-4FFF-8A98-A830F4002C53}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WowPacketParserModule.V5_4_8_18291", "WowPacketParserModule.V5_4_8_18291\WowPacketParserModule.V5_4_8_18291.csproj", "{8762D7B4-AD06-4DB6-85BA-5F1250C2083E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,18 @@ Global
 		{422AC0F6-A8DF-4FFF-8A98-A830F4002C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{422AC0F6-A8DF-4FFF-8A98-A830F4002C53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{422AC0F6-A8DF-4FFF-8A98-A830F4002C53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DBA8CAB-A268-424A-A321-C2FCA6D4CF22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DBA8CAB-A268-424A-A321-C2FCA6D4CF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DBA8CAB-A268-424A-A321-C2FCA6D4CF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DBA8CAB-A268-424A-A321-C2FCA6D4CF22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6A1E0F9-66CA-42CE-A4E3-7A0B5C9AD1BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6A1E0F9-66CA-42CE-A4E3-7A0B5C9AD1BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6A1E0F9-66CA-42CE-A4E3-7A0B5C9AD1BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6A1E0F9-66CA-42CE-A4E3-7A0B5C9AD1BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8762D7B4-AD06-4DB6-85BA-5F1250C2083E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8762D7B4-AD06-4DB6-85BA-5F1250C2083E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8762D7B4-AD06-4DB6-85BA-5F1250C2083E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8762D7B4-AD06-4DB6-85BA-5F1250C2083E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
