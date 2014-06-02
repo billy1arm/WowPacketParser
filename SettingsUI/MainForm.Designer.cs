@@ -615,13 +615,10 @@
             this.clientBuildComboBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.clientBuildComboBox.Items.AddRange(new object[] {
             "None",
-            "V5_4_7_18019",
-            "V5_4_7_17956",
+            "V5_4_7_18019"            "V5_4_7_17956",
             "V5_4_7_17930",
             "V5_4_7_17898",
             "V5_4_2_17688",
-            "V5_4_2_17658",
-            "V5_4_1_17538",
             "V5_4_0_17399",
             "V5_4_0_17371",
             "V5_4_0_17359",
